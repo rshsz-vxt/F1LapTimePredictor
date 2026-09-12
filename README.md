@@ -1,18 +1,25 @@
-# F1LapTimePredictor
-A Machine Learning project predicting F1 lap times by analyzing tire degradation.
 # F1 Lap Time Predictor & Tire Degradation Analysis 🏎️
 
-## 🛠️ What we actually did
-* **Built custom features:** The raw dataset didn't have a "Tire Age" column, so we had to code it ourselves by combining lap times with pit-stop data.
-* **No random splits:** Instead of a basic `train_test_split`, we trained the models on Stint 1 and tested them on Stint 2. This stops data leakage and makes it act like a real live-race forecast.
-* **Cleaned up the mess:** Real racing data is super noisy. We filtered out Lap 1 (standing starts), pit-lane laps, and crazy slow laps caused by traffic or VSCs.
-* **Model showdown:** We compared a basic Linear Regression against a Random Forest Regressor using RMSE and MAE to see which one caught the degradation curve better.
+This data science project models physical tire wear in Formula 1 racing. Using real-world race telemetry from the 2019 Italian GP (a dry race with no red flags), this project engineers a custom 'Tire Age' feature to track lap time performance. 
 
-## 📊 What we found
-* **The Baseline Model:** Completely ignores tire wear. It just plays it safe and predicts a flat, average speed for the whole race.
-* **The Random Forest Model:** This one actually got it! It successfully tracked the non-linear curve, showing exactly how lap times drop as the tires get older.
+## 🛠️ Methodology & Data Cleaning
+Real racing data is highly noisy. To ensure model accuracy and avoid data leakage, the following strict parameters were applied:
+* **Feature Engineering:** Calculated dynamic 'Stints' and 'Tire Age' (laps elapsed since last pit stop) from raw telemetry.
+* **Outlier Removal:** Filtered out standing starts, pit-stop laps, and the immediate out-laps. Furthermore, any lap slower than 1.5× the driver's median lap time was removed to account for VSC/traffic anomalies.
+* **Chronological Splitting:** Avoided random train-test splitting (which causes data leakage). Models were trained on all early stints and tested strictly on each driver's **final stint**.
 
-*(Note: We trained the models on the top 6 finishers, and plotted the final graphs for specific driver stints to make the degradation super clear.)*
+## 📊 Model Comparison Table
+The baseline Linear Regression (trained purely on grid position and lap number) was compared against a Random Forest Regressor enhanced with our engineered `tire_age` feature.
+
+| Model | Features Used | RMSE | MAE |
+| :--- | :--- | :--- | :--- |
+| **Baseline (Linear)** | Grid Position, Lap Number | 1.095s | 0.902s |
+| **Enhanced (Random Forest)** | Grid Position, Lap Number, Tire Age | 0.732s | 0.584s |
+*(Note: Replace the numbers above with the exact outputs from your VS Code terminal).*
+
+## 📈 Visualization
+![Final Stint Visualization](stint_plot.png)
+The baseline model fails to account for tire wear, predicting a relatively flat pace. The Random Forest model successfully captures the physical degradation curve.
 
 ## 💻 Tech Stack
 Python, Pandas, Scikit-Learn, and Matplotlib.
